@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- bootstrap -->
+  	<link rel="icon" type="image/x-icon" href="images/icon.png">
+	<!-- leaflet -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+	integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+	crossorigin=""/>
+	<link rel="stylesheet" href="css/leaflet.lumap.css"/>
+
+	<title>Lumap - Leaflet Control Luar Map</title>
+
+	<style type="text/css">
+		
+		body{
+			background-image: url('images/background.svg');
+			background-size: cover;
+			background-position: center center;
+			height: 100vh;
+			padding: 0;
+			margin: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.row{
+			display: flex;
+			background: #fff;
+		}
+		.container{
+			height: 800px;
+			width: 1300px;
+			background: #fff;
+			overflow: hidden;
+			border-radius: 10px;
+			box-shadow: 5px 5px 5px 5px #0002;
+		}
+		.row-1{
+			width: 25%;
+		}
+		.row-2{
+			width: 75%;
+		}
+		#map { height: 800px;width:100wh}
+		@media (max-width: 1368px) {
+			.container {
+				height: 600px;
+				width: 1000px;
+				max-width: calc(100% - 150px);
+  			}
+		}
+		@media (max-width: 768px) {
+			.container {
+				height: auto;
+				width: 100%;
+				max-width: 100%;
+  			}
+  			.row{
+  				display: block;
+  			}
+  			[class*="row-"]{
+  				width: 100%;
+  			}
+			#map { height: 100vh}
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+<div class="row">
+	<div class="row-1">
+		<div id="lumap"></div>
+	</div>
+	<div class="row-2">
+		<div id="map"></div>
+	</div>
+</div>
+</div>
+
+ <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+     crossorigin=""></script>
+
+<script type="text/javascript" src="js/leaflet.lumap.js"></script>
+<script type="text/javascript">
+
+	let map = L.map('map').setView([39.73, -104.99], 13);
+	// describe basemap variabel
+	let mapboxD =  L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v9/tiles/{z}/{x}/{y}?access_token=SECRET_TOKEN', {
+							attribution: 'Map data &copy; <a href=\\\"https://www.openstreetmap.org/\\\">OpenStreetMap</a> contributors,<a href=\\\"https://creativecommons.org/licenses/by-sa/2.0/\\\">CC-BY-SA</a>,Imagery © <a href=\\\"https://www.mapbox.com/\\\">Mapbox</a>',
+						});
+	let mapboxL =  L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/{z}/{x}/{y}?access_token=SECRET_TOKEN', {
+						attribution: 'Map data &copy; <a href=\\\"https://www.openstreetmap.org/\\\">OpenStreetMap</a> contributors,<a href=\\\"https://creativecommons.org/licenses/by-sa/2.0/\\\">CC-BY-SA</a>,Imagery © <a href=\\\"https://www.mapbox.com/\\\">Mapbox</a>',
+					});
+	// describe basemap variabel
+	mapboxL.addTo(map);
+
+	let baseMaps = {
+			id:'basemap',
+			title : 'BaseMaps',
+			type : 'single',
+			child : [
+				{
+					title : 'Mapbox Light',
+					iconHtml : `<img src="https://cdn-icons-png.flaticon.com/512/5088/5088218.png">`,
+				    layer : mapboxL
+				},
+				{
+					title : 'Mapbox Dark',
+					iconHtml : `<img src="https://cdn-icons-png.flaticon.com/512/5088/5088218.png">`,
+				    layer : mapboxD
+				}
+			]
+		};
+
+	let littleton = L.marker([39.61, -105.02]).bindPopup('This is Littleton, CO.');
+	let denver    = L.marker([39.74, -104.99]).bindPopup('This is Denver, CO.');
+	let aurora    = L.marker([39.73, -104.8]).bindPopup('This is Aurora, CO.');
+	let golden    = L.marker([39.77, -105.23]).bindPopup('This is Golden, CO.');
+	let cities = L.layerGroup([littleton, denver, aurora, golden]);
+
+	let overlayMaps = {
+		id:'layers',
+		title : 'Cities',
+		child : [{
+			title : 'Cities',
+			icon : `geo`,
+		    layer : cities
+		}]
+	};
+
+	let elLumap = document.querySelector('#lumap');
+	let lumap = new Lumap(map,elLumap,[baseMaps,overlayMaps]);
+
+	// responsive map
+    window.addEventListener('resize',setMapZoom) ;
+	setMapZoom();
+    function setMapZoom()
+    {
+		if(window.screen.width<768)
+        {
+        	map.setZoom(9);
+        }
+        else
+        {
+        	map.setZoom(10);
+        }
+    }
+	// responsive map
+</script>
+</body>
+</html>
